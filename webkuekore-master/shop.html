@@ -1,0 +1,255 @@
+﻿<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<title>食え、これを！</title>
+
+<link rel="stylesheet" href="css/style.css">
+
+<link rel="stylesheet" href="css/shop.css">
+
+<link rel="stylesheet" href="css/jquery.minimalect.css">
+
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/jquery.minimalect.js"></script>
+
+<script type="text/javascript" src="js/categoryData.js" charset="UTF-8"></script>
+<script type="text/javascript" src="js/storeData.js" charset="UTF-8"></script>
+<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
+</head>
+
+<body>
+
+<header>
+
+<div class="headtitle">
+
+<img src="images/header_mtitle.png" height="71" width="207" alt="">
+
+</div>
+
+</header>
+
+<script type="text/javascript" charset="UTF-8">
+//カテゴリナンバー取得
+var query1 = window.location.search;
+var qstr = query1.substr(1).split('&');
+var qstr2 = qstr[0].split('=');
+var category = qstr2[1];
+
+//ユーザの現在の位置情報を取得
+navigator.geolocation.getCurrentPosition(successCallback, errorCallback, {timeout:6000});
+
+var gl_lat = 0;
+var gl_lon = 0;
+
+//位置情報が取得できる場合
+function successCallback(position){
+  gl_lat = position.coords.latitude;
+  gl_lon = position.coords.longitude;
+
+  //現在の曜日と時刻を取得
+  var date = new Date();
+  var yobi = date.getDay();
+  var hour = date.getHours();
+
+  //時間帯の設定
+  var time_zone = 0;
+  if(6<=hour && hour<=10) time_zone = 5;
+  else if(11<=hour && hour<=16) time_zone = 6;
+  else if(17<=hour && hour<=21) time_zone = 7;
+  else time_zone = 8;
+
+  //営業してる可能性のある店の番号の抽出
+  var eigyouStoreNum = [];
+  for(var i=0; i<storeData.length; i++){
+    var week = storeData[i][time_zone].split(",");
+    if(week[yobi]==1) eigyouStoreNum.push(i);
+  }
+
+  //カテゴリ内のお店の番号の抽出
+  var categoryStoreNum = [];
+  for(var i=0; i<eigyouStoreNum.length; i++){
+    if(storeData[eigyouStoreNum[i]][4] == category || category == 0) categoryStoreNum.push(eigyouStoreNum[i]);
+  }
+
+  //カテゴリ内のお店が５店より多ければ近い店の番号を抽出。
+  var nearStoreNum = [];
+  var earth_r = 6378.137;
+  var Pi = 3.1415926535;
+  for(var i=0; i<categoryStoreNum.length; i++){
+    if(categoryStoreNum.length > 5){
+      //半径2km以内にある店の番号を抽出
+      var st_lat = storeData[categoryStoreNum[i]][1];
+      var st_lon = storeData[categoryStoreNum[i]][2];
+      var idoSa = (gl_lat - st_lat)*Pi/180;
+      var keidoSa = (gl_lon - st_lon)*Pi/180;
+      var nannbokuKyori = earth_r * idoSa;
+      var touzaiKyori = Math.cos(gl_lat*Pi/180)*earth_r*keidoSa;
+      var d = Math.sqrt(Math.pow(touzaiKyori, 2) + Math.pow(nannbokuKyori, 2));
+
+      if(d<=2){
+        nearStoreNum.push(categoryStoreNum[i]);
+      }
+    }else{
+      nearStoreNum.push(categoryStoreNum[i]);
+    }
+  }
+
+  //残った候補のお店の中からランダムに番号を抽出
+  var resultStoreNum = 1000;
+  if(nearStoreNum.length!=0){
+    var rannum = Math.floor(Math.random()*nearStoreNum.length);   
+    resultStoreNum = nearStoreNum[rannum];
+  }
+
+  storeResult(resultStoreNum);
+}
+
+//位置情報が取得できない場合
+function errorCallback(error){
+  var err_msg = "";
+  switch(error.code){
+    case 1:
+      err_msg = "位置情報の利用が許可されていません";
+      break;
+    case 2:
+      err_msg = "デバイスの位置が判定できません";
+      break;
+    case 3:
+      err_msg = "タイムアウトしました";
+      break;
+  }
+  document.getElementById("str_result").innerHTML=err_msg;
+
+  //現在の曜日と時刻を取得
+  var date = new Date();
+  var yobi = date.getDay();
+  var hour = date.getHours();
+
+  //時間帯の設定
+  var time_zone = 0;
+  if(6<=hour && hour<=10) time_zone = 5;
+  else if(11<=hour && hour<=16) time_zone = 6;
+  else if(17<=hour && hour<=21) time_zone = 7;
+  else time_zone = 8;
+
+  //営業してる可能性のある店の番号の抽出
+  var eigyouStoreNum = [];
+  for(var i=0; i<storeData.length; i++){
+    var week = storeData[i][time_zone].split(",");
+    if(week[yobi]==1) eigyouStoreNum.push(i);
+  }
+  
+  //カテゴリ内のお店の番号の抽出
+  var categoryStoreNum = [];
+  for(var i=0; i<eigyouStoreNum.length; i++){
+    if(storeData[eigyouStoreNum[i]][4] == category || category == 0) categoryStoreNum.push(eigyouStoreNum[i]);
+  }
+
+  //残った候補のお店の中からランダムに番号を抽出
+  var resultStoreNum = 1000;
+  if(categoryStoreNum.length!=0){
+    var rannum = Math.floor(Math.random()*categoryStoreNum.length);   
+    resultStoreNum = categoryStoreNum[rannum];
+  }
+
+  storeResult(resultStoreNum);
+}
+
+//お店の情報を表示
+function storeResult(num){
+  if(num!=1000){
+    document.getElementById("storeName").innerHTML = storeData[num][0];
+    document.getElementById("storePlace").innerHTML = storeData[num][3];
+    document.getElementById("storeCategory").innerHTML = categoryData[storeData[num][4]];
+    document.getElementById("storeTeikyuu").innerHTML = storeData[num][9];
+    document.getElementById("storeEigyou").innerHTML = storeData[num][10];
+
+    var container = document.getElementById("container");
+
+    //マップ表示
+    var map = new google.maps.Map(container, {
+      zoom: 14,
+      center: new google.maps.LatLng(storeData[num][1], storeData[num][2])
+    });
+
+    //お店のマーカー表示
+    var store = new google.maps.Marker({
+      map: map,
+      position: new google.maps.LatLng(storeData[num][1], storeData[num][2])
+    });
+
+    //現在地のマーカー表示
+    if(gl_lat!=0 && gl_lon!=0){
+      var place = new google.maps.Marker({
+        map: map,
+        position: new google.maps.LatLng(gl_lat, gl_lon)
+      });
+
+      var From = new google.maps.LatLng(gl_lat, gl_lon);
+      var To = new google.maps.LatLng(storeData[num][1], storeData[num][2]);
+      new google.maps.DirectionsService().route({
+        origin: From,
+        destination: To,
+        travelMode: google.maps.DirectionsTravelMode.WALKING
+      }, function(result, status){
+        if(status == google.maps.DirectionsStatus.OK){
+          new google.maps.DirectionsRenderer({map: map}).setDirections(result);
+        }
+      });
+      
+    }
+
+  }else{
+    document.getElementById("storeName").innerHTML = "なし";
+    document.getElementById("storePlace").innerHTML = "なし";
+    document.getElementById("storeCategory").innerHTML = "なし";
+    document.getElementById("storeTeikyuu").innerHTML = "なし";
+    document.getElementById("storeEigyou").innerHTML = "なし";
+    document.getElementById("nonstore").innerHTML="お店が見つかりません";
+  }
+}
+</script>
+<div class="contents">
+
+<div id="str_result"></div>
+<div id="nonstore"></div>
+<div class="title"><div id="storeName"></div></div>
+
+<div class="tag">
+
+<ul class="tag">
+
+<li><div id="storeCategory"></div></li>
+
+</ul>
+
+</div>
+
+<div class="clear"></div>
+
+<div class="time">
+住所：<div id="storePlace"></div>
+定休日：<div id="storeTeikyuu"></div>
+営業時間：<div id="storeEigyou"></div>
+</div>
+
+<!-- <div class="photo"><img src="images/samplephoto.png" height="297" width="532" alt=""></div>
+ -->
+<div class="map"><div id="container" style="width: 500px; height: 500px;"></div></div>
+
+<script type="text/javascript">
+var query = window.location.search;
+document.write("<a href=\"shop.html"+query+"\"><img src=\"images/IYADA.png\"></a>");
+</script> 
+<p><a href="index.html">戻る</a></p>
+</div>
+
+</body>
+
+</html>

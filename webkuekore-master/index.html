@@ -1,0 +1,69 @@
+﻿<!DOCTYPE html>
+
+<html lang="jp">
+
+<head>
+
+<meta charset="UTF-8">
+
+<title>食え、これを。</title>
+
+<link rel="stylesheet" href="css/style.css">
+
+<link rel="stylesheet" href="css/jquery.minimalect.css">
+
+<script type="text/javascript" src="js/jquery.min.js"></script>
+
+<script type="text/javascript" src="js/jquery.minimalect.js"></script>
+<script type="text/javascript" src="js/categoryData.js" charset="UTF-8"></script>
+
+<script>
+
+
+      $(document).ready(function(){
+
+        $("#category").minimalect();
+
+      });
+
+</script>
+
+
+</head>
+
+<body>
+
+<header>
+</header>
+
+
+<div class="searchbox">
+
+<img src="images/header_title.png" height="191" width="532" alt="">
+
+<form action="shop.html" method="get">
+
+<select id="category" name="category">
+  <option value="0" selected="selected">カテゴリ選択なし</option>
+  <script type="text/javascript">
+    for(var num=1; num<categoryData.length; num++){
+      document.write("<option value=\"" + num + "\">" + categoryData[num] + "</option>");
+    }
+  </script>
+</select>
+<input id="submit_button" type="submit" name="submit" value="ちかくの&#13;&#10;ごはんをさがす">
+
+</form>
+
+</div>
+
+
+<footer>
+
+<img src="images/footer_kiriha.png" height="225" width="532" alt="">
+
+</footer>
+
+</body>
+
+</html>
