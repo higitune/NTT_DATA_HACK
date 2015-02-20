@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>node.js × sqlite3で作るHeatmaps</title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <script>
+      function deleteRecord(obj) {
+        document.getElementById("target").value = obj.value;
+        document.getElementById("action").value = "delete";
+        document.frm.submit();
+      }
+    </script>
+    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true&libraries=visualization"></script>
+  </head>
+  <body>
+    <h1>node.js × sqlite3で作るCRUDアプリケーション</h1>
+    <p><%= messages %></p>
+    
+    <form action="/" method="post" name="frm">
+    
+    <fieldset style="width:450px">
+    <legend>検索フォーム</legend>
+    <input type="text" name="searchText" placeholder="%はワイルドカードとして扱われます。" style="width:250px"/>
+    <button type="submit" name="submitBtn" value="search">検索</button>
+    <button type="submit" name="submitBtn" value="reload">再表示</button>
+    </fieldset>
+    <br />
+    <table border="1">
+      <tr bgcolor="#cdcdcd" ><th>　</th><th>id</th><th>名前</th><th>ふりがな</th></tr>
+      </tr>
+    </table>
+    <br />
+    <hr />
+
+    <fieldset style="width:350px">
+    <legend>登録フォーム</legend>
+    名前<input type="text" name="name" /><br />
+    ふりがな<input type="text" name="furigana" /><br />
+      
+    <button type="submit" name="submitBtn" value="add">登録</button>
+      
+    <input type="hidden" id="target" name="target" value="" >
+    <input type="hidden" id="action" name="action" value="" >
+    </fieldset>
+    </form>
+    <div id="panel">
+      <button onclick="toggleHeatmap()">Toggle Heatmap</button>
+      <button onclick="changeGradient()">Change gradient</button>
+      <button onclick="changeRadius()">Change radius</button>
+      <button onclick="changeOpacity()">Change opacity</button>
+    </div>
+    <div id="map-canvas"></div>
+  </body> 
+
+</html>
+

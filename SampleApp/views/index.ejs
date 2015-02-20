@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>node.js × sqlite3で作るCRUDアプリケーション</title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <script>
+      function deleteRecord(obj) {
+        document.getElementById("target").value = obj.value;
+        document.getElementById("action").value = "delete";
+        document.frm.submit();
+      }
+    </script>
+  </head>
+  <body>
+    <h1>node.js × sqlite3で作るCRUDアプリケーション</h1>
+    <p><%= messages %></p>
+    
+    <form action="/" method="post" name="frm">
+    
+    <fieldset style="width:450px">
+    <legend>検索フォーム</legend>
+    <input type="text" name="searchText" placeholder="%はワイルドカードとして扱われます。" style="width:250px"/>
+    <button type="submit" name="submitBtn" value="search">検索</button>
+    <button type="submit" name="submitBtn" value="reload">再表示</button>
+    </fieldset>
+    <br />
+    <table border="1">
+      <tr bgcolor="#cdcdcd" ><th>　</th><th>id</th><th>名前</th><th>ふりがな</th></tr>
+      <% users.forEach(function(user){ %>
+      <tr>
+      <td><button type="button" name="submitBtn" value="<%= user.id %>" onclick="deleteRecord(this)">削除</button></td>
+      <td><%= user.id %></td><td><%= user.name %></td><td><%= user.furigana %></td>
+      <% }) %>
+      </tr>
+    </table>
+    <br />
+    <hr />
+
+    <fieldset style="width:350px">
+    <legend>登録フォーム</legend>
+    名前<input type="text" name="name" /><br />
+    ふりがな<input type="text" name="furigana" /><br />
+      
+    <button type="submit" name="submitBtn" value="add">登録</button>
+      
+    <input type="hidden" id="target" name="target" value="" >
+    <input type="hidden" id="action" name="action" value="" >
+    </fieldset>
+    </form>
+  </body> 
+
+</html>
+
