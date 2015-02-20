@@ -2,7 +2,7 @@
 var map, pointarray, heatmap;
 
 var tweetData = [];
-/*
+
 d3.csv("/javascripts/tokyo.csv", function (error, src) {
     var data = src;
     for (var i = 0; i < data.length; i++) {
@@ -13,7 +13,7 @@ d3.csv("/javascripts/tokyo.csv", function (error, src) {
         });
     }
 });
-*/
+/*
 tweets.forEach(function(tweet){
 	tweetData.push({
 		location: new google.maps.LatLng(tweet.lat, tweet.lng),
@@ -21,6 +21,7 @@ tweets.forEach(function(tweet){
 		weight: 1,
         });
 });
+*/
 function initialize() {
   var mapOptions = {
     zoom: 13,
