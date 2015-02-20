@@ -1,0 +1,44 @@
+div{
+	margin-bottom: 20px;
+}
+
+.headtitle{
+	width: 207px;
+	margin: 0 auto;
+}
+
+.contents{
+	width: 532px;
+	margin: 0 auto;
+}
+
+.title{
+	background: url(../images/icon_kiriha.png) no-repeat;
+	height: 80px;
+	font-size: 30px;
+	padding-left: 120px;
+	line-height: 80px;
+}
+
+.tag{
+	margin: 0;
+	padding: 0;
+	margin-top: 10px;
+	height: 1px;
+}
+
+.tag li{
+	list-style-type: none;
+	float: left;
+	background: #91C346;
+	margin-right: 20px;
+	color: white;
+	padding: 10px;
+   border-radius: 20px;        /* CSS3草案 */  
+    -webkit-border-radius: 20px;    /* Safari,Google Chrome用 */  
+    -moz-border-radius: 20px;   /* Firefox用 */  
+}
+
+.clear{
+	clear: both;
+}
