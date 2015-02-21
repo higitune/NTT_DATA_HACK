@@ -15,17 +15,27 @@ function get_plot_tweets(tweets,sw, ne, lat_size,lng_size){
   })
   return ret
 }
-function aaa(sw,ne){
-  return ne.lat-sw.lat
-}
 
+function get_tweets_from_json(sw,ne){
+  ret=[];
+  d3.json("/tweets_"+sw.lat()+"_"+ne.lat()+"_"+sw.lng()+"_"+ne.lng()+".json", function(error, data){
+    for(var i=0; i<data.length; i++){
+      ret.push({
+        location: new google.maps.LatLng(data[i].lat, data[i].lng),
+        //weight は pos nega判定した値を入れる?
+        weight: 1,
+      });
+    };
+  });
+  return ret
+}
 // Adding 500 Data Points
 var map, pointarray, heatmap;
-
+heatmap = new google.maps.visualization.HeatmapLayer({});
 var tweetrawData = [];
 var tweet;
 var bounds;
-
+/*
 d3.csv("/javascripts/tokyo.csv", function (error, src) {
     var data = src;
     for (var i = 0; i < data.length; i++) {
@@ -36,6 +46,18 @@ d3.csv("/javascripts/tokyo.csv", function (error, src) {
         });
     }
 });
+*/
+// default 処理
+d3.json("/tweets.json", function(error, data){
+  for(var i=0; i<data.length; i++){
+    tweetrawData.push({
+      location: new google.maps.LatLng(data[i].lat, data[i].lng),
+      //weight は pos nega判定した値を入れる?
+      weight: 1,
+    });
+  };
+});
+
 /*
 tweets.forEach(function(tweet){
 	tweetrawData.push({
@@ -53,18 +75,23 @@ function initialize() {
   };
   map = new google.maps.Map(document.getElementById('map-canvas'),
       mapOptions);
-//  var pointArray = new google.maps.MVCArray(tweetrawData);
-  // sw ne を指定して粒度を変化
-  heatmap = new google.maps.visualization.HeatmapLayer({
-    data: tweetrawData
-  });
-  heatmap.setMap(map);
 // 地図の状態を取得して，適切な粒度で
-  google.maps.event.addListener(map, 'bounds_changed', function() {
-    //hogehoge  
+  google.maps.event.addListener(map, 'idle', function() {
+//    window.setTimeout(function() {
+      bounds=map.getBounds();
+      ne=bounds.getNorthEast();
+      sw=bounds.getSouthWest();
+      tweets=get_tweets_from_json(sw,ne);
+      heatmap.setMap(null);
+      heatmap.setData(tweets);
+      set_heat();
+      console.log(heatmap.getMap());
   });
 }
-
+function set_heat(){
+  heatmap.setMap(map);
+}
+ 
 function change_Heatmap(){
   bounds=map.getBounds();
   ne=bounds.getNorthEast();
@@ -73,8 +100,6 @@ function change_Heatmap(){
   for (var i = 0; i < tweet.length; i++) {
     console.log(tweet[i].location.lat(),tweetrawData[i].location.lat())
   }
-  console.log("hoge")
-  console.log(sw)
   heatmap.setData(tweet);
 }
 

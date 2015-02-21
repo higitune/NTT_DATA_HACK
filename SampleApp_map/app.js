@@ -32,33 +32,45 @@ app.get('/', routes.index);
 // add start
 app.post('/', routes.index);
 // add end
+
+// from DB catch tweets
+app.param('prms',function(req,res,next,id){
+	next();
+});
 var sqlite3 = require('sqlite3').verbose();
+
 app.get('/tweets.json', function(req, res) {
+	// default 処理
   var db = new sqlite3.Database('tweets.sqlite3');
   var selected_tweets;
   db.serialize(function(){
-	db.all("SELECT id,lat,lng FROM tweets limit 5", function(err, rows){
+     db.all("SELECT id,lat,lng FROM tweets limit 5", function(err, rows){
 	    res.type('json');
+	    console.log(err);
+		selected_tweets=rows;
+		var tweetJSON =JSON.stringify(selected_tweets)
+		res.send(tweetJSON);
+	}); 
+  });
+});
+
+app.get('/tweets_:prms.json', function(req, res) {
+  var db = new sqlite3.Database('tweets.sqlite3');
+  var selected_tweets;
+  var splited_params=req.params.prms.split('_')
+  console.log(splited_params);
+  db.serialize(function(){
+//	db.all("SELECT id,lat,lng FROM tweets limit 10", function(err, rows){  	
+     db.all("SELECT id,lat,lng FROM tweets where '"+splited_params[0]+"' <= lat and lat <= '" + splited_params[1] +"' and '"+splited_params[2]+"' <= lng and lng <= '"+splited_params[3]+"'", function(err, rows){
+	    res.type('json');
+	    console.log(err);
+	    console.log("SELECT id,lat,lng FROM tweets where '"+splited_params[0]+"' <= lat and lat <= '" + splited_params[1] + "' and '" + splited_params[2] + "' <= lng and lng <= '" + splited_params[3]+"'");
 	    console.log(rows);
 		selected_tweets=rows;
 		var tweetJSON =JSON.stringify(selected_tweets)
 		res.send(tweetJSON);
 	}); 
   });
-  // We want to set the content-type header so that the browser understands
-  //  the content of the response.
-//  res.type('json');
-  // Normally, the would probably come from a database, but we can cheat:
-//  var tweetJSON =JSON.stringify(selected_tweets)
-  // Since the request is for a JSON representation of the people, we
-  //  should JSON serialize them. The built-in JSON.stringify() function
-  //  does that.
-//  var peopleJSON = JSON.stringify(people);
-  console.log("hogehoge");
-  console.log(selected_tweets);
-  // Now, we can use the response object's send method to push that string
-  //  of people JSON back to the browser in response to this request:
-//  res.send(tweetJSON);
 });
 
 http.createServer(app).listen(app.get('port'), function(){
