@@ -1,12 +1,35 @@
+
+function get_plot_tweets(tweets,sw, ne, lat_size,lng_size){
+  map_lng=(ne.lng()-sw.lng())/lng_size;
+  map_lat=(ne.lat()-sw.lat())/lat_size;
+  var ret = []
+  tweets.forEach(function(tweet){
+    // get grid
+    new_lat=sw.lat()+Math.floor((tweet.location.lat()-sw.lat())/map_lng)*map_lng;
+    new_lng=sw.lng()+Math.floor((tweet.location.lng()-sw.lng())/map_lat)*map_lng;
+    ret.push({
+        location: new google.maps.LatLng(new_lat, new_lng),
+        //weight は pos nega判定した値を入れる?
+        weight: 1,
+    })
+  })
+  return ret
+}
+function aaa(sw,ne){
+  return ne.lat-sw.lat
+}
+
 // Adding 500 Data Points
 var map, pointarray, heatmap;
 
-var tweetData = [];
+var tweetrawData = [];
+var tweet;
+var bounds;
 
 d3.csv("/javascripts/tokyo.csv", function (error, src) {
     var data = src;
     for (var i = 0; i < data.length; i++) {
-        tweetData.push({
+        tweetrawData.push({
         location: new google.maps.LatLng(data[i].latitude, data[i].longitude),
         //weight は pos nega判定した値を入れる?
         weight: 1,
@@ -15,7 +38,7 @@ d3.csv("/javascripts/tokyo.csv", function (error, src) {
 });
 /*
 tweets.forEach(function(tweet){
-	tweetData.push({
+	tweetrawData.push({
 		location: new google.maps.LatLng(tweet.lat, tweet.lng),
 		//weight は pos nega判定した値を入れる?
 		weight: 1,
@@ -30,23 +53,29 @@ function initialize() {
   };
   map = new google.maps.Map(document.getElementById('map-canvas'),
       mapOptions);
-//  var pointArray = new google.maps.MVCArray(tweetData);
-
+//  var pointArray = new google.maps.MVCArray(tweetrawData);
+  // sw ne を指定して粒度を変化
   heatmap = new google.maps.visualization.HeatmapLayer({
-    data: tweetData
+    data: tweetrawData
   });
-
   heatmap.setMap(map);
-
 // 地図の状態を取得して，適切な粒度で
   google.maps.event.addListener(map, 'bounds_changed', function() {
-        bounds=map.getBounds();
-        ne=bounds.getNorthEast();
-        sw=bounds.getSouthWest();
-        map_lng=ne.lng()-sw.lng();
-        map_lat=ne.lng()-sw.lng();
+    //hogehoge  
   });
+}
 
+function change_Heatmap(){
+  bounds=map.getBounds();
+  ne=bounds.getNorthEast();
+  sw=bounds.getSouthWest();
+  tweet=get_plot_tweets(tweetrawData,sw, ne, 1000,1000);
+  for (var i = 0; i < tweet.length; i++) {
+    console.log(tweet[i].location.lat(),tweetrawData[i].location.lat())
+  }
+  console.log("hoge")
+  console.log(sw)
+  heatmap.setData(tweet);
 }
 
 function toggleHeatmap() {
