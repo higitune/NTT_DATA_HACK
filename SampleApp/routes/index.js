@@ -1,9 +1,13 @@
 var sqlite3 = require('sqlite3').verbose();
-var db = new sqlite3.Database('db.sqlite3');
+var db = new sqlite3.Database('tweets.sqlite3');
 
 exports.index = function(req, res){
   db.serialize(function(){
     var message = "";
+	var sw_x=29;
+	var sw_y=1;
+	var ne_x=30;
+	var ne_y=100;
     
     // レコードの登録
     if (req.body.submitBtn == "add") {
@@ -20,7 +24,8 @@ exports.index = function(req, res){
     // 検索
     if (req.body.submitBtn == "search") {
       message = "検索結果を表示しました。";
-      db.all("SELECT id, name, furigana FROM users WHERE name like '" + req.body. searchText + "'", function(err, rows){
+	  message=""+req.body.searchText+"";
+      db.all("SELECT id,lat,lng FROM tweets where lat <= '" + ne_x + "' and '" + sw_x + "' <= lat and '" + sw_y + "' <= lng and lng <= '" + ne_y +"' limit 10", function(err, rows){
         if (!err) {
         　if(rows.length == 0) {
         　  message = "見つかりませんでした。";
@@ -37,7 +42,7 @@ exports.index = function(req, res){
     }
     // 全レコードを取得
     else {
-      db.all("SELECT id, name, furigana FROM users", function(err, rows){
+      db.all("SELECT id,lat,lng FROM tweets", function(err, rows){
         if (!err) {
           res.render('index', {
             messages: message,

@@ -18,19 +18,23 @@
     
     <form action="/" method="post" name="frm">
     
+	
+	
     <fieldset style="width:450px">
     <legend>検索フォーム</legend>
-    <input type="text" name="searchText" placeholder="%はワイルドカードとして扱われます。" style="width:250px"/>
+    <input type="number" name="searchText" placeholder="緯度" style="width:250px"/>
     <button type="submit" name="submitBtn" value="search">検索</button>
     <button type="submit" name="submitBtn" value="reload">再表示</button>
     </fieldset>
+	
+	
     <br />
     <table border="1">
-      <tr bgcolor="#cdcdcd" ><th>　</th><th>id</th><th>名前</th><th>ふりがな</th></tr>
+      <tr bgcolor="#cdcdcd" ><th>　</th><th>id</th><th>緯度</th><th>経度</th></tr>
       <% users.forEach(function(user){ %>
       <tr>
       <td><button type="button" name="submitBtn" value="<%= user.id %>" onclick="deleteRecord(this)">削除</button></td>
-      <td><%= user.id %></td><td><%= user.name %></td><td><%= user.furigana %></td>
+      <td><%= user.id %></td><td><%= user.lat %></td><td><%= user.lng %></td>
       <% }) %>
       </tr>
     </table>
