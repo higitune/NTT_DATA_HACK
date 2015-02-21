@@ -23,15 +23,24 @@
     
     <fieldset style="width:450px">
     <legend>検索フォーム</legend>
-    <input type="text" name="searchText" placeholder="%はワイルドカードとして扱われます。" style="width:250px"/>
+    <input type="number" name="sw_x" placeholder="nx_x" style="width:50px"/>
+    <input type="number" name="sw_y" placeholder="nx_x" style="width:50px"/>
+    <input type="number" name="ne_x" placeholder="nx_x" style="width:50px"/>
+    <input type="number" name="ne_y" placeholder="nx_x" style="width:50px"/>
     <button type="submit" name="submitBtn" value="search">検索</button>
     <button type="submit" name="submitBtn" value="reload">再表示</button>
     </fieldset>
     <br />
     <table border="1">
-      <tr bgcolor="#cdcdcd" ><th>　</th><th>id</th><th>名前</th><th>ふりがな</th></tr>
+      <tr bgcolor="#cdcdcd" ><th>　</th><th>id</th><th>緯度</th><th>経度</th></tr>
+      <% users.forEach(function(user){ %>
+      <tr>
+      <td><button type="button" name="submitBtn" value="<%= user.id %>" onclick="deleteRecord(this)">削除</button></td>
+      <td><%= user.id %></td><td><%= user.lat %></td><td><%= user.lng %></td>
+      <% }) %>
       </tr>
     </table>
+
     <br />
     <hr />
 
@@ -40,7 +49,7 @@
     名前<input type="text" name="name" /><br />
     ふりがな<input type="text" name="furigana" /><br />
       
-    <button type="submit" name="submitBtn" value="add">登録</button>
+    <button type="submit" name="submitBtn" value="add">登録</button><a href="./tweets.json">hogehoge</a>
       
     <input type="hidden" id="target" name="target" value="" >
     <input type="hidden" id="action" name="action" value="" >
