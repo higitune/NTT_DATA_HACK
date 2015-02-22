@@ -1,0 +1,1 @@
+jQuery('#date_start').datetimepicker();

@@ -1,72 +1,36 @@
-
-function get_plot_tweets(tweets,sw, ne, lat_size,lng_size){
-  map_lng=(ne.lng()-sw.lng())/lng_size;
-  map_lat=(ne.lat()-sw.lat())/lat_size;
-  var ret = []
-  tweets.forEach(function(tweet){
-    // get grid
-    new_lat=sw.lat()+Math.floor((tweet.location.lat()-sw.lat())/map_lng)*map_lng;
-    new_lng=sw.lng()+Math.floor((tweet.location.lng()-sw.lng())/map_lat)*map_lng;
-    ret.push({
-        location: new google.maps.LatLng(new_lat, new_lng),
-        //weight は pos nega判定した値を入れる?
-        weight: 1,
-    })
-  })
-  return ret
-}
-
+/*
 function get_tweets_from_json(sw,ne){
-  ret=[];
-  d3.json("/tweets_"+sw.lat()+"_"+ne.lat()+"_"+sw.lng()+"_"+ne.lng()+".json", function(error, data){
+  var ret=[];
+  d3.json("/tweets_"+sw.lat()+"_"+ne.lat()+"_"+sw.lng()+"_"+ne.lng()+".json", function(error, src){
+    var data=src;   
     for(var i=0; i<data.length; i++){
+      console.log(data[i].lat);
+      console.log(data[i].np);
       ret.push({
         location: new google.maps.LatLng(data[i].lat, data[i].lng),
         //weight は pos nega判定した値を入れる?
-        weight: 1,
+        weight: float(data[i].np),
       });
     };
+    console.log(ret[0]);
+    return ret[0].weight;
   });
-  return ret
-}
+};
+*/
+
 // Adding 500 Data Points
-var map, pointarray, heatmap;
+var map, pointarray, heatmap, p_heatmap, n_heatmap;
 heatmap = new google.maps.visualization.HeatmapLayer({});
+p_heatmap = new google.maps.visualization.HeatmapLayer({});
+n_heatmap = new google.maps.visualization.HeatmapLayer({});
+heatmap.set('radius', 40);
+p_heatmap.set('radius', 40);
+n_heatmap.set('radius', 40);
 var tweetrawData = [];
 var tweet;
 var bounds;
-/*
-d3.csv("/javascripts/tokyo.csv", function (error, src) {
-    var data = src;
-    for (var i = 0; i < data.length; i++) {
-        tweetrawData.push({
-        location: new google.maps.LatLng(data[i].latitude, data[i].longitude),
-        //weight は pos nega判定した値を入れる?
-        weight: 1,
-        });
-    }
-});
-*/
-// default 処理
-d3.json("/tweets.json", function(error, data){
-  for(var i=0; i<data.length; i++){
-    tweetrawData.push({
-      location: new google.maps.LatLng(data[i].lat, data[i].lng),
-      //weight は pos nega判定した値を入れる?
-      weight: 1,
-    });
-  };
-});
-
-/*
-tweets.forEach(function(tweet){
-	tweetrawData.push({
-		location: new google.maps.LatLng(tweet.lat, tweet.lng),
-		//weight は pos nega判定した値を入れる?
-		weight: 1,
-        });
-});
-*/
+var markers = [];
+var tweets = [];
 function initialize() {
   var mapOptions = {
     zoom: 13,
@@ -81,31 +45,92 @@ function initialize() {
       bounds=map.getBounds();
       ne=bounds.getNorthEast();
       sw=bounds.getSouthWest();
-      tweets=get_tweets_from_json(sw,ne);
-      heatmap.setMap(null);
-      heatmap.setData(tweets);
-      set_heat();
-      console.log(heatmap.getMap());
+      tweets=new Array();
+
+      var aaa=$.getJSON("/tweets_"+sw.lat()+"_"+ne.lat()+"_"+sw.lng()+"_"+ne.lng()+".json", function(data) {
+        for(var i=0; i<data.length; i++){
+          tweets.push({
+            location: new google.maps.LatLng(data[i].lat, data[i].lng),
+            //weight は pos nega判定した値を入れる?
+            weight: data[i].np,
+          });
+        }
+      });
+      console.log(typeof aaa);
+      if (typeof tweets !== "undefined"){
+        console.log("flag");
+        console.log(tweets);
+        setTimeout('set_heat()',3000);;
+      }
+      var aaa=$.getJSON("/sampled_tweets_"+sw.lat()+"_"+ne.lat()+"_"+sw.lng()+"_"+ne.lng()+".json", function(sampled_tweets) {
+      for (var i = 0; i < sampled_tweets.length; i++) {
+        document.getElementById(""+(i+1)+"_t").innerHTML = new Date(sampled_tweets[i].time*1000).toLocaleString();
+        document.getElementById(""+(i+1)+"_u").innerHTML = sampled_tweets[i].name;
+        document.getElementById(""+(i+1)+"_c").innerHTML = sampled_tweets[i].containts;        
+      };
+      });
   });
 }
+
+function addMarker(position) {
+  markers.push(new google.maps.Marker({
+    position: position,
+    map: map,
+    animation: google.maps.Animation.DROP
+  }));
+}
+function clearMarkers() {
+  for (var i = 0; i < markers.length; i++) {
+    markers[i].setMap(null);
+  }
+  markers = [];
+}
+
 function set_heat(){
+  heatmap.setData([]);
+  heatmap.setData(tweets);
   heatmap.setMap(map);
 }
  
-function change_Heatmap(){
-  bounds=map.getBounds();
-  ne=bounds.getNorthEast();
-  sw=bounds.getSouthWest();
-  tweet=get_plot_tweets(tweetrawData,sw, ne, 1000,1000);
-  for (var i = 0; i < tweet.length; i++) {
-    console.log(tweet[i].location.lat(),tweetrawData[i].location.lat())
-  }
-  heatmap.setData(tweet);
-}
-
 function toggleHeatmap() {
   heatmap.setMap(heatmap.getMap() ? null : map);
 }
+ 
+function toggle_type() {
+  pos_tweets=[]
+  console.log(tweets)
+  tweets.forEach(function(tweet){
+    if (tweet.weight>=0){
+      console.log("hoge");
+      pos_tweets.push(tweet)
+    }
+  });
+  heatmap.setMap(null);
+  n_heatmap.setMap(null);
+  p_heatmap.setData([]);
+  p_heatmap.setData(pos_tweets);
+  p_heatmap.setMap(map);
+}
+
+function negative(){
+  neg_tweets=[]
+  tweets.forEach(function(tweet){
+    if (tweet.weight<0){
+      neg_tweets.push({
+        location:tweet.location,
+        weight:(-1)*tweet.weight
+      })
+    }
+  });
+  heatmap.setMap(null);
+  p_heatmap.setMap(null);
+  n_heatmap.setData([]);
+  n_heatmap.setData(neg_tweets);
+  n_heatmap.setMap(map);  
+}
+
+
+
 
 function changeGradient() {
   var gradient = [
@@ -128,7 +153,7 @@ function changeGradient() {
 }
 
 function changeRadius() {
-  heatmap.set('radius', heatmap.get('radius') ? null : 20);
+  heatmap.set('radius', heatmap.get('radius') ? 40 : 20);
 }
 
 function changeOpacity() {
@@ -136,4 +161,3 @@ function changeOpacity() {
 }
 
 google.maps.event.addDomListener(window, 'load', initialize);
-

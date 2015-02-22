@@ -6,12 +6,53 @@ body {
 a {
   color: #00B7FF;
 }
+p{
+        margin: 0px;
+        padding: 0px
 
-      html, body, #map-canvas {
+}
+      html, body{
         height: 100%;
         margin: 0px;
         padding: 0px
       }
+      #time_range{
+      	width:70%;
+        margin: 0px;
+        padding: 0px;
+        float:right;
+      }
+	#map-canvas{
+		height:90%;
+		width:75%;
+	        margin: 0px;
+	        padding: 0px;
+		float:left;
+	}
+	#map-controler{
+		width:25%;
+		background:black;
+		height:100px;
+	        margin: 0px;
+	        padding: 0px;
+		float:right;
+	}
+	.Time_container{
+		width:50%;
+		height:100px;
+	        margin: 0px;
+	        padding: 0px;
+		float:left;
+		margin:0 auto;
+	}
+
+	#tweets_viewer{
+		width:25%;
+		background:red;
+	        margin: 0px;
+	        padding: 0px;
+		float:right;
+	}
       #panel {
         position: absolute;
         top: 5px;

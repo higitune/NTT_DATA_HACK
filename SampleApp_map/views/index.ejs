@@ -4,21 +4,20 @@
     <meta charset="UTF-8">
     <title>node.js × sqlite3で作るHeatmaps</title>
     <link rel='stylesheet' href='/stylesheets/style.css' />
-    <script>
-      function deleteRecord(obj) {
-        document.getElementById("target").value = obj.value;
-        document.getElementById("action").value = "delete";
-        document.frm.submit();
-      }
-    </script>
-    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+        <link rel='stylesheet' href='/stylesheets/jquery.timepicker.css' />
+            <link rel='stylesheet' href='/stylesheets/jquery.datetimepicker.css' />
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true&libraries=visualization"></script>
     <script src="/javascripts/sample_goo_heat3.js"></script>
+    <script src="/javascripts/jquery.datetimepicker.js"></script>
+        <script>$(function(){
+jQuery('.date').datetimepicker();
+        });</script>
   </head>
   <body>
-    <h1>node.js × sqlite3で作るCRUDアプリケーション</h1>
+    <h1>犯罪係数予測マップ</h1>
     <p><%= messages %></p>
-    
+<!--    
     <form action="/" method="post" name="frm">
     
     <fieldset style="width:450px">
@@ -31,16 +30,6 @@
     <button type="submit" name="submitBtn" value="reload">再表示</button>
     </fieldset>
     <br />
-    <table border="1">
-      <tr bgcolor="#cdcdcd" ><th>　</th><th>id</th><th>緯度</th><th>経度</th></tr>
-      <% users.forEach(function(user){ %>
-      <tr>
-      <td><button type="button" name="submitBtn" value="<%= user.id %>" onclick="deleteRecord(this)">削除</button></td>
-      <td><%= user.id %></td><td><%= user.lat %></td><td><%= user.lng %></td>
-      <% }) %>
-      </tr>
-    </table>
-
     <br />
     <hr />
 
@@ -55,14 +44,46 @@
     <input type="hidden" id="action" name="action" value="" >
     </fieldset>
     </form>
+
+-->
     <div id="panel">
       <button onclick="toggleHeatmap()">Toggle Heatmap</button>
+      <button onclick="toggle_type()">Toggle Type</button>
+      <button onclick="negative()">Negative</button>
       <button onclick="change_Heatmap()">Change Heatmap</button>
       <button onclick="changeGradient()">Change gradient</button>
       <button onclick="changeRadius()">Change radius</button>
       <button onclick="changeOpacity()">Change opacity</button>
     </div>
+
+
     <div id="map-canvas"></div>
+    <div id="map-controler">
+    <form action="/" method="post" name="frm">
+
+    <fieldset id="time_range">
+    <legend>Time Range</legend>
+    <p>From</p>
+    <input type="text" class="date" />
+    <p>To</p>
+    <input type="text" class="date" />
+    <button type="submit" name="submitBtn" value="search">検索</button>
+    </fieldset>
+    </form>
+    </div>
+
+    <div id="tweets_viewer">
+    <table border="1">
+      <tr bgcolor="#cdcdcd" ><th>Time</th><th>User</th><th>Tweet</th></tr>
+      <tr>
+      <td id="1_t"></td><td id="1_u"></td><td id="1_c"></td></tr>
+      <tr><td id="2_t"></td><td id="2_u"></td><td id="2_c"></td></tr>
+      <tr><td id="3_t"></td><td id="3_u"></td><td id="3_c"></td></tr>
+      <tr><td id="4_t"></td><td id="4_u"></td><td id="4_c"></td></tr>
+      <tr><td id="5_t"></td><td id="5_u"></td><td id="5_c"></td> 
+      </tr>
+    </table>
+    </div>
   </body> 
 
 </html>
