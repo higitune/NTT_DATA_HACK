@@ -1,58 +1,58 @@
 body {
   padding: 50px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  background:#2f4f4f;
 }
-
+h1 { color: #ffe4b5;}
 a {
   color: #00B7FF;
 }
-p{
-        margin: 0px;
-        padding: 0px
-
+.p_{
+	color: #ffe4b5;
 }
+
       html, body{
         height: 100%;
         margin: 0px;
         padding: 0px
       }
-      #time_range{
-      	width:70%;
-        margin: 0px;
-        padding: 0px;
-        float:right;
-      }
 	#map-canvas{
 		height:90%;
-		width:75%;
+		width:60%;
 	        margin: 0px;
 	        padding: 0px;
 		float:left;
 	}
 	#map-controler{
-		width:25%;
-		background:black;
-		height:100px;
-	        margin: 0px;
-	        padding: 0px;
-		float:right;
-	}
-	.Time_container{
-		width:50%;
-		height:100px;
+		width:20%;
+		background:#2f4f4f;
+		height:200px;
 	        margin: 0px;
 	        padding: 0px;
 		float:left;
-		margin:0 auto;
 	}
-
+	.jqPlot-sample{
+			width:15%;
+	        margin: 0px;
+	        padding: 0px;
+		background:#2f4f4f;
+		float:right;
+	}
 	#tweets_viewer{
-		width:25%;
-		background:red;
+		width:40%;
+		background:#2f4f4f;
 	        margin: 0px;
 	        padding: 0px;
 		float:right;
 	}
+	#right_wrapper{
+		width:40%;
+		background:#2f4f4f;
+	        margin: 0px;
+	        padding: 0px;
+		float:right;
+	}
+
       #panel {
         position: absolute;
         top: 5px;

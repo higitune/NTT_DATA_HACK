@@ -6,13 +6,25 @@
     <link rel='stylesheet' href='/stylesheets/style.css' />
         <link rel='stylesheet' href='/stylesheets/jquery.timepicker.css' />
             <link rel='stylesheet' href='/stylesheets/jquery.datetimepicker.css' />
+            <link rel="stylesheet" href="/stylesheets/jquery.circliful.css">
+</head>
 <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true&libraries=visualization"></script>
     <script src="/javascripts/sample_goo_heat3.js"></script>
     <script src="/javascripts/jquery.datetimepicker.js"></script>
+        <script src="/javascripts/jquery.circliful.min.js"></script>
         <script>$(function(){
 jQuery('.date').datetimepicker();
         });</script>
+        <script src="/javascripts/jquery.circliful.min.js"></script>
+<script src="/javascript/jquery.jqplot.min.js"></script>
+<script src="/javascript/jqplot.pieRenderer.min.js"></script>
+<link rel="stylesheet" type="text/css" href="/stylesheets/jquery.jqplot.min.css" />
+<script>
+$(document).ready(function(){
+    $('.myStat').circliful();
+});
+</script>
   </head>
   <body>
     <h1>犯罪係数予測マップ</h1>
@@ -48,40 +60,50 @@ jQuery('.date').datetimepicker();
 -->
     <div id="panel">
       <button onclick="toggleHeatmap()">Toggle Heatmap</button>
-      <button onclick="toggle_type()">Toggle Type</button>
+      <button onclick="positive()">Positive</button>
       <button onclick="negative()">Negative</button>
-      <button onclick="change_Heatmap()">Change Heatmap</button>
-      <button onclick="changeGradient()">Change gradient</button>
+      <button onclick="neg_pos()">Change Heatmap</button>
+      <button onclick="pos_neg()">Change gradient</button>
       <button onclick="changeRadius()">Change radius</button>
       <button onclick="changeOpacity()">Change opacity</button>
     </div>
 
 
     <div id="map-canvas"></div>
+<div id="jqPlot-sample"></div>
     <div id="map-controler">
-    <form action="/" method="post" name="frm">
-
-    <fieldset id="time_range">
-    <legend>Time Range</legend>
-    <p>From</p>
-    <input type="text" class="date" />
-    <p>To</p>
-    <input type="text" class="date" />
-    <button type="submit" name="submitBtn" value="search">検索</button>
-    </fieldset>
+    <form action="/" method="post" name="frm" id="form1">
+    <p class="p_">From</p>
+    <input type="text" class="date" id="from" />
+    <p class="p_">To</p>
+    <input type="text" class="date" id="to" />
     </form>
     </div>
 
     <div id="tweets_viewer">
     <table border="1">
-      <tr bgcolor="#cdcdcd" ><th>Time</th><th>User</th><th>Tweet</th></tr>
-      <tr>
-      <td id="1_t"></td><td id="1_u"></td><td id="1_c"></td></tr>
-      <tr><td id="2_t"></td><td id="2_u"></td><td id="2_c"></td></tr>
-      <tr><td id="3_t"></td><td id="3_u"></td><td id="3_c"></td></tr>
-      <tr><td id="4_t"></td><td id="4_u"></td><td id="4_c"></td></tr>
-      <tr><td id="5_t"></td><td id="5_u"></td><td id="5_c"></td> 
+      <tr bgcolor="#cdcdcd" ><th>User</th><th>Tweet</th></tr>
+      <tr bgcolor="#ffe4b5">
+      <td id="1_np"></td><td id="1_c" rowspan="3"></td></tr>
+      <tr bgcolor="#ffe4b5"><td id="1_t"></td></tr>
+      <tr bgcolor="#ffe4b5"><td id="1_u"></td></tr>
+      <tr bgcolor="#ffe4b5"><td id="2_np"></td><td id="2_c" rowspan="3"></td></tr>
+      <tr bgcolor="#ffe4b5"><td id="2_t"></td></tr>
+      <tr bgcolor="#ffe4b5"><td id="2_u"></td></tr>
+      <tr bgcolor="#ffe4b5"><td id="3_np"></td><td id="3_c" rowspan="3"></td></tr>
+      <tr bgcolor="#ffe4b5"><td id="3_t"></td></tr>
+      <tr bgcolor="#ffe4b5"><td id="3_u"></td></tr>
+      <tr bgcolor="#add8e6"><td id="4_np"></td><td id="4_c" rowspan="3"></td></tr>
+      <tr bgcolor="#add8e6"><td id="4_t"></td></tr>
+      <tr bgcolor="#add8e6"><td id="4_u"></td></tr>
+      <tr bgcolor="#add8e6"><td id="5_np"></td><td id="5_c" rowspan="3"></td> 
       </tr>
+      <tr bgcolor="#add8e6"><td id="5_t"></td></tr>
+      <tr bgcolor="#add8e6"><td id="5_u"></td></tr>
+      <tr bgcolor="#add8e6">
+      <td id="6_np"></td><td id="6_c" rowspan="3"></td></tr>
+      <tr bgcolor="#add8e6"><td id="6_t"></td></tr>
+      <tr bgcolor="#add8e6"><td id="6_u"></td></tr>
     </table>
     </div>
   </body> 
